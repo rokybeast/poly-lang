@@ -1,14 +1,21 @@
-mod parser;
+use poly::evaluator::evaluate_expression;
+use poly::parser::parse_expression;
+use std::env;
 
 fn main() {
-    let code = "new myVar as int: 10;";
-    match parser::parse_variable_declaration(code) {
-        Ok((remaining_input, variable)) => {
-            println!("Parsed variable: {:?}", variable);
-            println!("Remaining input: {}", remaining_input);
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 2 {
+        println!("Usage: poly <expression>");
+        return;
+    }
+
+    let input = &args[1];
+    match parse_expression(input) {
+        Ok((_, expression)) => {
+            let result = evaluate_expression(&expression);
+            println!("Result: {}", result);
         }
-        Err(e) => {
-            println!("Error parsing code: {:?}", e);
-        }
+        Err(err) => println!("Error parsing expression: {:?}", err),
     }
 }
