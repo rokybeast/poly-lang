@@ -4,7 +4,7 @@
 #
 
 # Sources
-source ~/poly/zsh/plugins # Plugins
-source ~/poly/zsh/prompt # PS1/Prompt
-source ~/poly/zsh/settings # Settings/Configuration
-source ~/poly/zsh/aliases # Aliases
+source ~/poly/config/zsh/plugins # Plugins
+source ~/poly/config/zsh/prompt # PS1/Prompt
+source ~/poly/config/zsh/settings # Settings/Configuration
+source ~/poly/config/zsh/aliases # Aliases
