@@ -1,0 +1,10 @@
+#
+# ZSHCONFIG - Header File
+# ! Note: Only to be added sources in, try not to edit this file (permanently)
+#
+
+# Sources
+source ~/poly/zsh/plugins # Plugins
+source ~/poly/zsh/prompt # PS1/Prompt
+source ~/poly/zsh/settings # Settings/Configuration
+source ~/poly/zsh/aliases # Aliases

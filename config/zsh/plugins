@@ -1,0 +1,30 @@
+# Plugins
+# Autosuggestions (ghost text)
+# source /nix/store/$(ls /nix/store | grep zsh-autosuggestions | head -n 1)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Autocomplete (fancy tab completion)
+# source /nix/store/$(ls /nix/store | grep zsh-autocomplete | head -n 1)/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
+# Completions (extra completion scripts)
+fpath=(/nix/store/$(ls /nix/store | grep zsh-completions | head -n 1)/share/zsh/plugins/zsh-completions $fpath)
+autoload -U compinit && compinit
+
+# History substring search (Ctrl+Up/Down or arrows for partial history)
+# source /nix/store/$(ls /nix/store | grep zsh-history-substring-search | head -n 1)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+# Syntax highlighting (must be last)
+source /nix/store/$(ls /nix/store | grep zsh-syntax-highlighting | head -n 1)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Enable zoxide
+eval "$(zoxide init zsh)"
+
+# Importing Plugins
+plugins=(
+	sudo
+	zsh-navigation-tools
+	vscode
+	universalarchive
+	thefuck
+	systemadmin
+	nmap
+)

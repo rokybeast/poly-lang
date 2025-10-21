@@ -1,0 +1,20 @@
+#
+# ZSHCONFIG - Settings
+#
+
+# Set Options
+setopt autocd
+setopt correct
+setopt histignoredups
+setopt sharehistory
+setopt extendedglob
+
+# History Options
+HISTFILE=~/.zsh_history
+HISTSIZE=5000
+SAVEHIST=5000
+
+# Keybinding Options
+bindkey -e
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down

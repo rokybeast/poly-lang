@@ -1,0 +1,104 @@
+#
+# ZSHCONFIG - Prompt/PS1
+#
+# Colors
+
+# Black
+BLACK_BG="%K{235}"
+BLACK_FG="%F{235}"
+
+# Green
+GREEN_BG="%K{37}"
+GREEN_FG="%F{37}"
+
+# Red
+RED_FG="%F{210}"
+RED_BG="%K{210}"
+
+# White
+WHITE_FG="%F{255}"
+WHITE_BG="%K{255}"
+
+# Sky Blue
+SKY_BLUE_FG="%F{117}"
+SKY_BLUE_BG="%K{117}"
+
+# Icons
+TRIANGLE_RIGHT=$'\ue0b0'
+TRIANGLE_LEFT=$'\ue0b2'
+ARCH_LOGO=$'\uf303'
+GIT_BRANCH=$'\ue0a0'
+CHECK_MARK=$'\uf00c'
+CROSS_MARK=$'\uf00d'
+USER_ICON=$'\uf007'
+ROOT_ICON=$'\uf292'
+ARROW=$'\uea9c'
+
+# Track sudo usage
+_last_command_was_sudo=0
+
+# Capture command before execution
+function _prompt_preexec() {
+    if [[ "$1" =~ ^sudo ]]; then
+        _last_command_was_sudo=1
+    else
+        _last_command_was_sudo=0
+    fi
+}
+
+# Build the entire prompt in the precmd function
+function build_prompt() {
+    local exit_code=$?
+    local git_part=""
+    local status_part=""
+    local user_part=""
+    
+    # Determine user icon and color
+    if [[ "$EUID" -eq 0 ]]; then
+        # Root user - red hashtag icon
+        user_part="${RED_FG}${USER_ICON}%f"
+    elif (( _last_command_was_sudo == 1 )); then
+        # Sudo command executed - red user icon
+        user_part=" %f%k${RED_BG}${BLACK_FG} ${USER_ICON} root %f%k${RED_FG}${TRIANGLE_RIGHT}%f"
+    else
+        # Regular user - sky blue user icon
+        user_part=" %f%k${SKY_BLUE_BG}${BLACK_FG} ${USER_ICON} $USER %f%k${SKY_BLUE_FG}${TRIANGLE_RIGHT}%f"
+    fi
+    
+    # Build status indicator (tick/cross + user icon)
+    if (( exit_code == 0 )); then
+        # Success
+        status_part="${BLACK_FG}${TRIANGLE_LEFT}${BLACK_BG}${GREEN_FG} ${CHECK_MARK} ${user_part}"
+    else
+        # Error
+        status_part="${BLACK_FG}${TRIANGLE_LEFT}${BLACK_BG}${RED_FG} ${CROSS_MARK} ${user_part}"
+    fi
+    
+    # Check if we're in a git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        local git_branch=$(git branch --show-current 2>/dev/null)
+        
+        if [[ -n "$git_branch" ]]; then
+            # Check if working directory is clean
+            if git diff --quiet 2>/dev/null && git diff --cached --quiet 2>/dev/null; then
+                # Clean repository - green
+                git_part="── ${GREEN_FG}${TRIANGLE_LEFT}${GREEN_BG}${WHITE_FG} ${GIT_BRANCH} ${git_branch} %f%k${GREEN_FG}${TRIANGLE_RIGHT}%f"
+            else
+                # Dirty repository - red
+                git_part="── ${RED_FG}${TRIANGLE_LEFT}${RED_BG}${WHITE_FG} ${GIT_BRANCH} ${git_branch} %f%k${RED_FG}${TRIANGLE_RIGHT}%f"
+            fi
+        fi
+    fi
+    
+    # Build complete prompt with right-aligned status
+    PROMPT="${WHITE_BG}${BLACK_FG} ${ARCH_LOGO} ${BLACK_BG}${WHITE_FG}${TRIANGLE_RIGHT}${BLACK_BG}${WHITE_FG} [%~] %f%k${BLACK_FG}${TRIANGLE_RIGHT}%f ${git_part}
+${WHITE_FG}└──%f${BLACK_FG}%f%k$ "
+    
+    # Right prompt with status indicator
+    RPROMPT="${status_part}"
+}
+
+# Register the hooks
+autoload -Uz add-zsh-hook
+add-zsh-hook preexec _prompt_preexec
+add-zsh-hook precmd build_prompt
